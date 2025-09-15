@@ -1,0 +1,97 @@
+defaults:
+  - _self_
+  - model: gamma_hdlm
+  - override hydra/launcher: submitit_slurm
+
+ngpus: 4 # default value would be overridden by accelerator
+gradient_accumulation_steps: 8
+model_type: "gamma_hybrid"
+
+
+tokenizer:
+  tokens: 50257
+  model: gpt2
+
+training:
+  batch_size: 256
+  accum: ${gradient_accumulation_steps}
+  n_iters: 1000000
+  snapshot_freq: 10000
+  log_freq: 500
+  eval_freq: 5000
+  snapshot_freq_for_preemption: 5000
+  weight: standard
+  snapshot_sampling: True
+  ema: 0.9999
+  warmup_iter: 50000
+
+data:
+  train: openwebtext-train
+  valid: wikitext103
+  cache_dir: ~/cache_data
+  debug: False  # set to False for full training
+
+graph:
+  type: QGamma
+  gamma: 0.01  
+  report_all: False
+  expanded_sigma: True
+  
+noise:
+  type: loglinear
+  sigma_min: 1e-4
+  sigma_max: 10.0
+  ar_diffusion: False
+  expanded_sigma: ${graph.expanded_sigma}
+
+# Maybe need a new sampling method
+sampling:
+  predictor: analytic
+  steps_per_level: 1 # number of steps per level (in inference time) also in training time if match_inference is True
+  noise_removal: True
+  strategy: direct
+  strategy_param: 0.9
+
+annealing:
+  type: block # choices: block, simple, simple_block or None for full-block training
+  efficient: False
+  width: 1024 # smaller values for actual block or simple annealing
+  tau: 2048 # smaller values for faster inference and generation
+  eval_tau: ${annealing.tau}
+  steps_per_level: ${sampling.steps_per_level} # this would be handled later with OmegaConf: if ${sampling.match_inference} else 0
+  sampling_method: SAR # choices: AR, NAR, SAR
+  diffusion_loss_weight: 1.0
+  ce_loss_weight: 1.0
+  sampling_eps: 1e-4
+  attention:
+    context_type: block_causal # choices: `causal`, `full`, `block_causal`
+    block_type: full # choices: `full`, `causal`
+  match_inference: True # to do the same noise removal as in the training
+
+
+eval:
+  batch_size: 32
+  perplexity: True
+  perplexity_batch_size: 16
+
+optim:
+  weight_decay: 0.0
+  optimizer: AdamW
+  lr: 3e-4
+  beta1: 0.9
+  beta2: 0.999
+  eps: 1e-8
+  warmup: 10000
+  grad_clip: 1.
+  scheduler: lambda
+
+experiment:
+  name: gamma-hdlm-1  # rename to your own wandb run name
+  wandb_project: hdlm-experiments # rename to your own wandb project name
+
+hydra:
+  run:
+    dir: exp_local/${data.train}/${experiment.wandb_project}/${experiment.name}
+  sweep:
+    dir: exp/${data.train}/${now:%Y.%m.%d}/${now:%H%M%S}
+    subdir: ${hydra.job.num}

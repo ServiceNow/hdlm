@@ -1,0 +1,32 @@
+defaults:
+  - gamma_hdlm  
+  - _self_        
+
+# Hugging Face model to fine-tune from
+hf_model_id: "hdlm-group/hdlm-base-gamma-0.05"  # Change this to your model or None 
+model_type: "gamma_hybrid"
+
+# Fine-tuning settings
+reset_step_for_finetuning: true  # Start from step 0
+finetune_lr_multiplier: 0.1      
+
+training:
+  n_iters: 25000                  
+  lr: 8e-5                       
+  log_freq: 500
+  eval_freq: 2500
+  snapshot_freq_for_preemption: 2500
+
+graph:
+  type: QGamma
+  gamma: 0.1
+
+data:
+  train: openwebtext-train
+  valid: wikitext103
+  cache_dir: ~/cache_data
+  debug: False  # set to False for full training
+
+experiment:
+  wandb_project: "hdlm-finetuning"
+  name: "finetune-from-hf"

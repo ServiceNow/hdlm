@@ -1,0 +1,6 @@
+[tool.setuptools]
+packages = ["hdlm"]
+
+[project]
+name = "hdlm"
+version = "0.0.0"

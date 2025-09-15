@@ -1,0 +1,31 @@
+# Configuration for fine-tuning from Hugging Face models
+# This extends the base epsilon_hdlm.yaml configuration
+
+defaults:
+  - epsilon_hdlm  # This loads epsilon_hdlm.yaml as the base
+  - _self_        # This allows this file to override the base
+
+# Hugging Face model to fine-tune from
+hf_model_id: "hdlm-group/hdlm-base-epsilon-0.01"  # Change this to your model
+model_type: "epsilon_hybrid"
+
+# Fine-tuning settings
+reset_step_for_finetuning: true  # Start from step 0
+
+# Override training parameters for fine-tuning
+training:
+  n_iters: 5000                  
+  lr: 1e-5                       
+  log_freq: 100
+  eval_freq: 500
+  snapshot_freq_for_preemption: 1000
+
+data:
+  train: openwebtext-train
+  valid: wikitext103
+  cache_dir: ~/cache_data
+  debug: False  # set to False for full training
+
+experiment:
+  wandb_project: "hdlm-finetuning"
+  name: "finetune-from-hf"

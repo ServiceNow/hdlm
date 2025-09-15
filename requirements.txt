@@ -1,0 +1,31 @@
+# This file assumes that some dependencies (torch, flash-attn, etc.) were installed first.
+# Please use `bash create_uv_venv.sh` to create the environment, and use `source .venv/bin/activate` to activate it.
+
+# ML dependencies
+transformers==4.51.3
+accelerate==1.9.0
+wandb==0.21.0
+datasets==3.6.0
+xformers==0.0.29.post3
+peft==0.16.0
+diffusers==0.34.0
+
+# Evaluation metrics
+mauve-text==0.4.0
+evaluate==0.4.5
+rouge-score==0.1.2
+nltk==3.9.1
+code-bert-score==0.4.1
+
+# Scientific computing
+scikit-learn==1.7.1
+scipy==1.16.1
+pandas==2.3.1
+matplotlib==3.10.3
+
+# Configuration and experiment management
+hydra-core==1.3.2
+hydra-submitit-launcher==1.2.0
+
+# Development and testing
+pytest==8.4.1

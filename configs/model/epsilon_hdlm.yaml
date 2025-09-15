@@ -1,0 +1,13 @@
+name: epsilon_hdlm
+type: ddit
+hidden_size: 768
+cond_dim: 128
+length: 1024
+n_blocks: 12
+n_heads: 12
+dropout: 0.1
+scale_by_sigma: False
+transformer_sigma_conditioning: False  
+hybrid_sigma_embedding: False
+post_process_logits: False
+use_timestep_embedding: False

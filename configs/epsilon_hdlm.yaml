@@ -1,0 +1,77 @@
+defaults:
+  - _self_
+  - model: epsilon_hdlm
+  - override hydra/launcher: submitit_slurm
+
+reset_step_for_finetuning: true
+ngpus: 2 # default value would be overridden by accelerator
+type: aligned
+gradient_accumulation_steps: 8
+model_type: "epsilon_hybrid"
+
+tokenizer:
+  tokens: 50257
+  model: gpt2
+
+training:
+  batch_size: 512
+  accum: ${gradient_accumulation_steps}
+  n_iters: 1000000
+  snapshot_freq: 5000
+  log_freq: 500
+  eval_freq: 5000
+  snapshot_freq_for_preemption: 5000
+  snapshot_sampling: True
+  ema: 0.9999
+  warmup_iter: 50000
+  loss_type: hybrid # choices: standard, hybrid
+  epsilon: 0.01
+  lambda: 1.0
+
+data:
+  train: openwebtext-train
+  valid: wikitext103
+  cache_dir: ~/cache_data
+  debug: False  # set to False for full training
+
+
+annealing:
+  type: block # choices: block, simple, simple_block, or None for full-block training
+  efficient: False
+  width: 1024 # determine the widht of the block fo block annealing or simple annealing
+  tau: 1024 # smaller values for faster inference and generation
+  eval_tau: ${annealing.tau}
+  sampling_method: SAR # choices: AR, NAR, SAR
+  sampling_eps: 1e-4
+  attention:
+    context_type: block_causal # choices: `causal`, `full`, `block_causal`
+    block_type: full # choices: `full`, `causal`
+  match_inference: True # to do the same noise removal as in the training
+
+
+eval:
+  batch_size: 32
+  perplexity: True
+  perplexity_batch_size: 16
+
+optim:
+  weight_decay: 0.1
+  optimizer: AdamW
+  lr: 3e-4
+  beta1: 0.9
+  beta2: 0.95
+  eps: 1e-8
+  warmup: 10000
+  grad_clip: 1.
+  scheduler: cosine
+
+experiment:
+  name: epsilon-hdlm-1  # rename to your own wandb run name
+  wandb_project: hdlm-experiments # rename to your own wandb project name
+
+hydra:
+  run:
+    dir: exp_local/${data.train}/${experiment.wandb_project}/${experiment.name}
+  sweep:
+    dir: exp/${data.train}/${now:%Y.%m.%d}/${now:%H%M%S}
+    subdir: ${hydra.job.num}
