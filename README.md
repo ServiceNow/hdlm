@@ -16,9 +16,7 @@ HDLM introduces a unified framework that combines the strengths of autoregressiv
 
 Our implementation provides two main model families, one for each of our hybrid noising processes. Simply put, these models differ in *how* they "interpolate" between absorbing and uniform processes.
 - **Epsilon-Hybrid**: interpolate the *evolution* operators, yielding models conceptually closer to MDLM (Sahoo et al. 2024).
-    - **[Detailed Documentation](hdlm/epsilon_hybrid/README.md)**
 - **Gamma-Hybrid**: interpolate the *transition* operators, yielding models conceptually closer to SEDD (Lou et al. 2024).
-    - **[Detailed Documentation](hdlm/gamma_hybrid/README.md)**
 
 The names "epsilon" and "gamma" stem from the parameters ε and γ in [the paper](https://openreview.net/forum?id=rgq9BFXSFl). Crudely speaking, these parameters specify "how much uniform is blended with the absorbing process" in the corresponding hybrid family.
 
