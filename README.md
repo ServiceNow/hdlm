@@ -72,6 +72,15 @@ A different script and configuration file template is provided for finetuning ou
 accelerate launch --config-file configs/accelerate/multi2.yaml hdlm/finetune.py --config-name epsilon_finetune_from_hf.yaml
 ```
 
+## Licenses
+
+Our own contributions are distributed under the [MIT license](LICENSE).
+
+This project is built off [SEDD](https://github.com/louaaron/Score-Entropy-Discrete-Diffusion), which is also distributed under the [MIT license](LICENSE).
+
+Additional code was adapted from [MDLM](https://github.com/kuleshov-group/mdlm), distributed under the [Apache 2.0](LICENSE-APACHE.md) license.
+
+
 ## Citation
 
 If you use this code in your research, please cite our paper:
